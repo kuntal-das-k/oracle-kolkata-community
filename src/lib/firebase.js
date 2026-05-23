@@ -19,25 +19,30 @@ const requiredKeys = [
   firebaseConfig.appId,
 ];
 
-if (requiredKeys.some((value) => !value)) {
+const firebaseEnabled = requiredKeys.every((value) => !!value);
+
+let app = null;
+let auth = null;
+
+if (firebaseEnabled) {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+
+  if (firebaseConfig.measurementId) {
+    isSupported()
+      .then((supported) => {
+        if (supported) {
+          getAnalytics(app);
+        }
+      })
+      .catch(() => {
+        // Analytics is optional; ignore support errors.
+      });
+  }
+} else {
   console.warn(
     "Firebase config missing. Check VITE_FIREBASE_* variables in your env file."
   );
 }
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-if (firebaseConfig.measurementId) {
-  isSupported()
-    .then((supported) => {
-      if (supported) {
-        getAnalytics(app);
-      }
-    })
-    .catch(() => {
-      // Analytics is optional; ignore support errors.
-    });
-}
-
-export { auth };
+export { auth, firebaseEnabled };

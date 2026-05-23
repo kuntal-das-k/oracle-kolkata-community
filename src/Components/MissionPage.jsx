@@ -1,6 +1,4 @@
 const MISSION_STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap');
-
   /* ── Infinite scroll animations ── */
   @keyframes marqueeLeft {
     0%   { transform: translateX(0); }
@@ -15,22 +13,14 @@ const MISSION_STYLES = `
   .marquee-left:hover,
   .marquee-right:hover { animation-play-state: paused; }
 
-  /* ── Ambient red glow pulse ── */
-  @keyframes glowPulse {
-    0%, 100% { opacity: 0.55; transform: scale(1); }
-    50%       { opacity: 0.85; transform: scale(1.08); }
-  }
-  .glow-orb { animation: glowPulse 6s ease-in-out infinite; }
-  .glow-orb2 { animation: glowPulse 8s ease-in-out infinite reverse; }
-
   /* ── Card float on hover ── */
   .m-card {
     transition: transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.35s ease, border-color 0.3s;
   }
   .m-card:hover {
-    transform: translateY(-6px) scale(1.03);
-    box-shadow: 0 20px 50px rgba(180,0,0,0.5), 0 0 0 1px rgba(255,120,120,0.3);
-    border-color: rgba(255,120,120,0.4) !important;
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(255,255,255,0.15), 0 8px 32px 0 rgba(0, 0, 0, 0.15) !important;
+    border-color: rgba(255,255,255,0.25) !important;
   }
 
   /* ── Title letter shimmer ── */
@@ -39,21 +29,21 @@ const MISSION_STYLES = `
     100% { background-position: 400px 0; }
   }
   .mission-title {
-    background: linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.5) 40%, rgba(255,255,255,0.08) 80%);
+    background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,1) 40%, rgba(255,255,255,0.3) 80%);
     background-size: 400px 100%;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: shimmer 5s linear infinite;
-    font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 0.3em;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.25em;
   }
 
   /* ── Learn more button ── */
   .learn-btn {
     position: relative;
     overflow: hidden;
-    transition: color 0.3s, transform 0.25s;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .learn-btn::before {
     content: '';
@@ -65,7 +55,7 @@ const MISSION_STYLES = `
     border-radius: 50px;
   }
   .learn-btn:hover::before { transform: translateX(0); }
-  .learn-btn:hover { color: #8b0000 !important; transform: scale(1.04); }
+  .learn-btn:hover { color: #5a0000 !important; transform: scale(1.03); }
   .learn-btn span { position: relative; z-index: 1; }
 
   /* ── Scan line texture overlay ── */
@@ -111,16 +101,16 @@ const ROW2 = [
 ];
 
 const STATS = [
-  { value: "12K+", label: "Community Members" },
-  { value: "340+", label: "Events Hosted" },
+  { value: "1000+", label: "Community Members" },
+  { value: "50+", label: "Events Hosted" },
   { value: "98%", label: "Satisfaction Rate" },
-  { value: "50+", label: "Expert Mentors" },
+  { value: "15+", label: "Expert Speakers" },
 ];
 
 function CarouselRow({ items, direction }) {
   const doubled = [...items, ...items];
   return (
-    <div style={{ overflow: "hidden", width: "100%", maskImage: "linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%)" }}>
+    <div style={{ overflow: "hidden", width: "100%", maskImage: "linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%)", WebkitMaskImage: "linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%)" }}>
       <div className={direction === "left" ? "marquee-left" : "marquee-right"} style={{ gap: "14px" }}>
         {doubled.map((item, i) => (
           <div
@@ -129,28 +119,30 @@ function CarouselRow({ items, direction }) {
             style={{
               width: "280px",
               flexShrink: 0,
-              background: "linear-gradient(135deg, rgba(160,0,0,0.55) 0%, rgba(100,0,0,0.4) 100%)",
-              border: "1px solid rgba(255,80,80,0.15)",
+              background: "rgba(255, 255, 255, 0.06)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
               borderRadius: "16px",
               padding: "26px 22px",
-              backdropFilter: "blur(10px)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
               cursor: "default",
             }}
           >
             <div style={{ fontSize: "26px", marginBottom: "10px" }}>{item.icon}</div>
             <h4 style={{
-              fontFamily: "'Bebas Neue', sans-serif",
+              fontFamily: "'Outfit', sans-serif",
               fontSize: "19px",
               color: "#fff",
-              letterSpacing: "0.07em",
+              letterSpacing: "0.02em",
               margin: "0 0 8px 0",
+              fontWeight: 700,
             }}>
               {item.title}
             </h4>
             <p style={{
-              fontFamily: "'Barlow', sans-serif",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
               fontSize: "13px",
-              color: "rgba(255,255,255,0.65)",
+              color: "rgba(255,255,255,0.7)",
               lineHeight: 1.65,
               margin: 0,
             }}>
@@ -168,39 +160,25 @@ export default function MissionPage() {
     <>
       <style>{MISSION_STYLES}</style>
 
-      <section style={{ background: "white", padding: "40px 0 60px", position: "relative", overflow: "hidden" }} className="sm:py-16 md:py-20">
-
-        {/* ── Ambient background glows ── */}
-        <div className="glow-orb hidden sm:block" style={{
-          position: "absolute", top: "10%", left: "15%",
-          width: "500px", height: "500px",
-          background: "radial-gradient(circle, rgba(200,0,0,0.22) 0%, transparent 70%)",
-          borderRadius: "50%", pointerEvents: "none",
-        }} />
-        <div className="glow-orb2 hidden sm:block" style={{
-          position: "absolute", bottom: "10%", right: "10%",
-          width: "400px", height: "400px",
-          background: "radial-gradient(circle, rgba(180,0,0,0.18) 0%, transparent 70%)",
-          borderRadius: "50%", pointerEvents: "none",
-        }} />
+      <section id="about-us" style={{ background: "#ffffff", position: "relative", overflow: "hidden" }} className="py-10 px-0 sm:py-16 md:py-20">
 
         <div style={{ maxWidth: "1260px", margin: "0 auto", padding: "0 16px" }} className="sm:px-6 md:px-8">
 
-          {/* ── Main card container ── */}
+          {/* ── Main card container — red gradient ── */}
           <div
             className="scanlines"
             style={{
               position: "relative",
-              background: "linear-gradient(150deg, #c40000 0%, #8b0000 30%, #4a0000 65%, #200000 100%)",
+              background: "linear-gradient(150deg, #cc0000 0%, #9b0000 35%, #6b0000 70%, #3a0000 100%)",
               borderRadius: "28px",
               overflow: "hidden",
-
+              border: "1px solid rgba(255, 255, 255, 0.1)",
             }}
           >
 
             {/* ── Inner mesh grid texture ── */}
             <div style={{
-              position: "absolute", inset: 0, opacity: 0.07,
+              position: "absolute", inset: 0, opacity: 0.04,
               backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
               backgroundSize: "48px 48px",
               pointerEvents: "none",
@@ -211,23 +189,23 @@ export default function MissionPage() {
 
               {/* eyebrow */}
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
-                <div style={{ width: "32px", height: "2px", background: "rgba(255,180,180,0.6)" }} />
-                <span style={{ fontFamily: "'Barlow', sans-serif", fontSize: "11px", fontWeight: 700, letterSpacing: "0.3em", color: "rgba(255,180,180,0.8)", textTransform: "uppercase" }}>
+                <div style={{ width: "32px", height: "2px", background: "rgba(255,255,255,0.3)" }} />
+                <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "11px", fontWeight: 700, letterSpacing: "0.3em", color: "rgba(255,255,255,0.7)", textTransform: "uppercase" }}>
                   Oracle Kolkata Community
                 </span>
-                <div style={{ width: "32px", height: "2px", background: "rgba(255,180,180,0.6)" }} />
+                <div style={{ width: "32px", height: "2px", background: "rgba(255,255,255,0.3)" }} />
               </div>
 
               {/* MISSION title */}
               <div style={{ position: "relative", display: "inline-block" }}>
-                <h2 className="mission-title" style={{ fontSize: "clamp(64px, 10vw, 110px)", margin: 0, lineHeight: 0.9 }}>
+                <h2 className="mission-title" style={{ fontSize: "clamp(54px, 8vw, 90px)", margin: 0, lineHeight: 0.9, fontWeight: 900 }}>
                   MISSION
                 </h2>
                 {/* underline accent */}
                 <div style={{
                   position: "absolute", bottom: "-8px", left: 0,
                   width: "100%", height: "3px",
-                  background: "linear-gradient(90deg, rgba(255,150,150,0.8), transparent)",
+                  background: "linear-gradient(90deg, rgba(255,255,255,0.5), transparent)",
                   borderRadius: "2px",
                 }} />
               </div>
@@ -235,32 +213,31 @@ export default function MissionPage() {
               {/* decorative right element - Hidden on mobile */}
               <div className="hidden md:block" style={{
                 position: "absolute", top: "40px", right: "60px",
-                fontFamily: "'Bebas Neue', sans-serif",
+                fontFamily: "'Outfit', sans-serif",
                 fontSize: "13px", letterSpacing: "0.4em",
-                color: "rgba(255,255,255,0.12)",
+                color: "rgba(255,255,255,0.1)",
                 writingMode: "vertical-rl",
                 textOrientation: "mixed",
               }}>
-                ORACLE · KOLKATA · 2024
+                ORACLE · KOLKATA · 2026
               </div>
             </div>
 
             {/* ── Description + Stats row ── */}
             <div style={{ display: "flex", flexDirection: "column", gap: "24px", padding: "24px 20px 32px", alignItems: "flex-start" }} className="sm:flex-row sm:items-center sm:gap-8 md:gap-12 sm:px-8 md:px-12 lg:px-[60px] lg:py-[36px] lg:pb-[48px]">
               <p style={{
-                fontFamily: "'Barlow', sans-serif",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
                 fontSize: "14px",
                 lineHeight: 1.75,
-                color: "rgba(255,255,255,0.72)",
+                color: "rgba(255,255,255,0.85)",
                 maxWidth: "520px",
                 margin: 0,
                 flex: "1 1 300px",
-                fontStyle: "italic",
-                fontWeight: 300,
+                fontWeight: 400,
               }} className="sm:text-[15px] sm:leading-[1.85]">
-                Our Analytics Dashboard provides a clear and intuitive interface for you to easily analyze your data.
-                From customizable graphs to real-time data updates, our platform offers everything you need
-                to gain <strong style={{ color: "rgba(255,180,180,0.9)", fontStyle: "normal", fontWeight: 600 }}>valuable insights</strong> and drive meaningful decisions.
+                Empowering the local developer ecosystem by hosting regular technical meetups, sharing resources, and mentoring students. 
+                Our community bridges the gap between academics and enterprise cloud technology to build 
+                <strong style={{ color: "#ffffff", fontWeight: 700 }}> valuable skills</strong> and foster local career growth.
               </p>
 
               {/* Stats strip */}
@@ -268,21 +245,21 @@ export default function MissionPage() {
                 {STATS.map((s, i) => (
                   <div key={i} className="stat-item" style={{ animationDelay: `${i * 0.12}s`, textAlign: "center" }}>
                     <div style={{
-                      fontFamily: "'Bebas Neue', sans-serif",
+                      fontFamily: "'Outfit', sans-serif",
                       fontSize: "28px",
                       color: "#fff",
-                      letterSpacing: "0.04em",
+                      letterSpacing: "0.02em",
                       lineHeight: 1,
-                      textShadow: "0 0 20px rgba(255,120,120,0.5)",
+                      fontWeight: 800,
                     }} className="sm:text-[32px] md:text-[38px]">{s.value}</div>
-                    <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: "10px", color: "rgba(255,255,255,0.5)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: "4px" }} className="sm:text-[11px]">{s.label}</div>
+                    <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "10px", color: "rgba(255,255,255,0.6)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: "4px" }} className="sm:text-[11px]">{s.label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* ── Divider line ── */}
-            <div style={{ margin: "0 20px 24px", height: "1px", background: "linear-gradient(90deg, transparent, rgba(255,150,150,0.3) 40%, rgba(255,150,150,0.3) 60%, transparent)" }} className="sm:mx-8 md:mx-12 lg:mx-[60px] sm:mb-8 md:mb-10" />
+            <div style={{ margin: "0 20px 24px", height: "1px", background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15) 40%, rgba(255,255,255,0.15) 60%, transparent)" }} className="sm:mx-8 md:mx-12 lg:mx-[60px] sm:mb-8 md:mb-10" />
 
             {/* ── Carousel rows ── */}
             <div style={{ display: "flex", flexDirection: "column", gap: "14px", paddingBottom: "16px" }}>
@@ -303,13 +280,13 @@ export default function MissionPage() {
               <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                 {["Cloud", "Database", "DevOps", "AI/ML", "Security", "PL/SQL"].map(tag => (
                   <span key={tag} style={{
-                    fontFamily: "'Barlow', sans-serif",
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
                     fontSize: "11px",
                     fontWeight: 600,
                     letterSpacing: "0.08em",
-                    color: "rgba(255,200,200,0.7)",
+                    color: "rgba(255,255,255,0.75)",
                     background: "rgba(255,255,255,0.06)",
-                    border: "1px solid rgba(255,150,150,0.15)",
+                    border: "1px solid rgba(255,255,255,0.12)",
                     padding: "5px 12px",
                     borderRadius: "50px",
                   }}># {tag}</span>
@@ -321,11 +298,11 @@ export default function MissionPage() {
                 className="learn-btn"
                 style={{
                   background: "rgba(255,255,255,0.08)",
-                  border: "1px solid rgba(255,255,255,0.3)",
+                  border: "1px solid rgba(255,255,255,0.2)",
                   color: "white",
                   padding: "13px 32px",
                   borderRadius: "50px",
-                  fontFamily: "'Barlow', sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
                   fontWeight: 700,
                   fontSize: "13px",
                   letterSpacing: "0.1em",
@@ -345,7 +322,7 @@ export default function MissionPage() {
             <div style={{
               position: "absolute", bottom: 0, left: 0,
               width: "200px", height: "200px",
-              background: "radial-gradient(circle at 0% 100%, rgba(255,100,100,0.08) 0%, transparent 70%)",
+              background: "radial-gradient(circle at 0% 100%, rgba(255,255,255,0.05) 0%, transparent 70%)",
               pointerEvents: "none",
             }} />
           </div>

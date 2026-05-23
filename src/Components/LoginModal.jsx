@@ -53,6 +53,25 @@ const LoginModal = ({ isOpen, onClose }) => {
           await updateProfile(userCredential.user, { displayName: formData.name });
         }
 
+        // Log registration to Google Sheets (fire-and-forget background task)
+        const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
+        if (GOOGLE_SCRIPT_URL) {
+          fetch(GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/plain",
+            },
+            body: JSON.stringify({
+              name: formData.name || "Community Member",
+              email: formData.email,
+              phone: "",
+              type: "login",
+              subject: "Community Account Registration",
+              message: "User signed up via standard registration form."
+            }),
+          }).catch((err) => console.error("Error logging signup to Google Sheets:", err));
+        }
+
         setMessage('✓ Account created successfully.');
       } else {
         await signInWithEmailAndPassword(auth, formData.email, formData.password);
@@ -90,7 +109,27 @@ const LoginModal = ({ isOpen, onClose }) => {
       }
 
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const userCredential = await signInWithPopup(auth, provider);
+
+      // Log Google Login/Signup to Google Sheets (fire-and-forget background task)
+      const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
+      if (GOOGLE_SCRIPT_URL && userCredential.user) {
+        fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          body: JSON.stringify({
+            name: userCredential.user.displayName || "Google User",
+            email: userCredential.user.email || "",
+            phone: userCredential.user.phoneNumber || "",
+            type: "login",
+            subject: "Community Account Login (Google)",
+            message: "User logged in/signed up using Google Auth."
+          }),
+        }).catch((err) => console.error("Error logging Google login to Google Sheets:", err));
+      }
+
       setMessage('✓ Logged in with Google.');
 
       setTimeout(() => {
@@ -141,7 +180,7 @@ const LoginModal = ({ isOpen, onClose }) => {
         {message && (
           <div
             className={`mb-4 p-3 rounded-lg text-center text-sm ${
-              message.includes('Thank you')
+              message.includes('✓')
                 ? 'bg-green-100 text-green-700'
                 : 'bg-red-100 text-red-700'
             }`}

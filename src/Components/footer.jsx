@@ -31,34 +31,93 @@ const TwitterIcon = () => (
 
 export default function Footer() {
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
+
+  const handleSubscribe = async (e) => {
+    if (e) e.preventDefault();
+    if (!email) {
+      setStatusMessage("Please enter a valid email address.");
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setStatusMessage("Please enter a valid email address.");
+      return;
+    }
+
+    setIsLoading(true);
+    setStatusMessage("");
+
+    try {
+      const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
+
+      if (!GOOGLE_SCRIPT_URL) {
+        setStatusMessage("Configuration error: Google Apps Script URL not set in .env.local.");
+        setIsLoading(false);
+        return;
+      }
+
+      const payload = {
+        name: "Newsletter Subscriber",
+        email: email,
+        phone: "",
+        type: "subscribe",
+        subject: "Newsletter Subscription",
+        message: "User subscribed to newsletter via footer.",
+      };
+
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        setStatusMessage("✓ Subscribed successfully!");
+        setEmail("");
+        setTimeout(() => setStatusMessage(""), 4000);
+      } else {
+        setStatusMessage(`Error: ${result.error || result.message || "Failed to subscribe"}`);
+      }
+    } catch (error) {
+      console.error("Error subscribing:", error);
+      setStatusMessage("Failed to subscribe. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div style={{ width: "100%", background: "white", fontFamily: "'Segoe UI', Arial, sans-serif" }}>
       {/* ── WHITE TOP CARD ── */}
       <div
+        className="flex flex-col lg:flex-row items-center justify-between px-6 lg:px-[70px] py-6 lg:py-[20px] gap-6"
         style={{
           background: "#ffffff",
           borderTop: "solid red",
-          borderRadius: "24px 24px 0 0",
-          padding: "16px 20px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "16px",
+          borderRadius: "40px 40px 0 0",
         }}
-        className="sm:px-8 sm:py-5 sm:flex-row sm:justify-between md:px-12 lg:px-[70px] lg:rounded-t-[40px]"
       >
         {/* Oracle Logo */}
-        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-          <img src={Logo} alt="logo" className="w-40 sm:w-48 md:w-60 h-auto" />
+        <div className="flex items-center gap-[15px]">
+          <img src={Logo} alt="logo" className="w-48 lg:w-60 h-auto" />
         </div>
 
         {/* Stay in the Loop */}
-        <div style={{ textAlign: "center" }} className="sm:text-right">
-          <h2 style={{ fontSize: "24px", fontWeight: 900, color: "#9b0000", margin: "0 0 8px 0", lineHeight: 1.1 }} className="sm:text-3xl md:text-4xl lg:text-[54px]">
+        <div className="text-center lg:text-right">
+          <h2 className="text-3xl lg:text-[54px] font-[900] text-[#9b0000] mb-2 leading-[1.1] m-0">
             Stay in the Loop
           </h2>
-          <p style={{ color: "#666", fontSize: "13px", margin: 0 }} className="sm:text-sm md:text-[15px]">
+          <p className="text-[#666] text-sm lg:text-[15px] m-0">
             Get event updates and Oracle insights straight to your inbox.
           </p>
         </div>
@@ -66,113 +125,76 @@ export default function Footer() {
 
       {/* ── RED GRADIENT BODY ── */}
       <div
+        className="rounded-t-[36px] px-6 lg:px-[80px] pt-12 lg:pt-[120px] min-h-[60vh] flex flex-col justify-between"
         style={{
           background: "linear-gradient(180deg, #e30000 0%, #8c0000 55%, #4d0000 100%)",
-          borderRadius: "24px 24px 0 0",
-          padding: "40px 16px 0",
-          minHeight: "auto",
         }}
-        className="sm:px-8 md:px-12 lg:px-20 lg:rounded-t-[36px] lg:pt-[80px] xl:pt-[120px]"
       >
         {/* Content row */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "32px",
-            paddingBottom: "40px",
-            alignItems: "stretch",
-          }}
-          className="sm:gap-10 md:grid md:grid-cols-2 lg:grid-cols-[1fr_1.8fr_1fr] lg:gap-[60px] lg:pb-[100px]"
-        >
+        <div className="flex flex-col lg:grid lg:grid-cols-[1fr_1.8fr_1fr] gap-10 lg:gap-[60px] pb-16 lg:pb-[100px] items-start">
           {/* Col 1: About */}
-          <p style={{ color: "rgba(255,255,255,0.85)", fontSize: "14px", lineHeight: 1.75, margin: 0 }} className="md:text-[15px]">
+          <p className="text-white/85 text-[15px] leading-[1.75] m-0">
             High level experience in web design and development knowledge, producing quality work.
           </p>
 
           {/* Col 2: Subscribe */}
           <div>
-            <p style={{ color: "rgba(255,255,255,0.85)", fontSize: "14px", lineHeight: 1.75, marginBottom: "16px", marginTop: 0 }} className="sm:mb-5 md:text-[15px]">
+            <p className="text-white/85 text-[15px] leading-[1.75] mb-[22px] mt-0">
               Subscribe to stay tuned for new web design and latest updates. Let's do it!
             </p>
-            <div style={{ display: "flex" }}>
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                style={{
-                  flex: 1,
-                  padding: "12px 14px",
-                  fontSize: "13px",
-                  border: "1.5px solid rgba(255,255,255,0.35)",
-                  background: "rgba(255,255,255,0.07)",
-                  color: "white",
-                  outline: "none",
-                  borderRadius: "6px 0 0 6px",
-                  boxSizing: "border-box",
-                }}
-                className="sm:py-3 sm:px-4 sm:text-sm lg:placeholder:text-[14px]"
+                placeholder="Enter your email Address"
+                disabled={isLoading}
+                className="flex-1 px-[18px] py-[14px] text-[14px] border-[1.5px] border-white/35 bg-white/5 text-white outline-none rounded-t-md sm:rounded-l-md sm:rounded-tr-none placeholder-white/50 disabled:opacity-50"
+                required
               />
               <button
-                style={{
-                  padding: "12px 16px",
-                  background: "white",
-                  color: "#900",
-                  fontWeight: 700,
-                  fontSize: "13px",
-                  border: "none",
-                  borderRadius: "0 6px 6px 0",
-                  cursor: "pointer",
-                  whiteSpace: "nowrap",
-                }}
-                className="sm:px-6 sm:py-3 sm:text-sm lg:px-[30px]"
+                type="submit"
+                disabled={isLoading}
+                className="px-[24px] py-[14px] bg-white text-[#cc0000] font-[700] text-[14px] border-none rounded-b-md sm:rounded-r-md sm:rounded-bl-none cursor-pointer whitespace-nowrap hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Subscribe
+                {isLoading ? "Subscribing..." : "Subscribe"}
               </button>
-            </div>
+            </form>
+            {statusMessage && (
+              <p className={`text-xs mt-2 font-medium ${statusMessage.includes("✓") ? "text-green-300" : "text-yellow-300"}`}>
+                {statusMessage}
+              </p>
+            )}
           </div>
 
           {/* Col 3: Follow + Call */}
-          <div style={{ display: "flex", gap: "32px", alignItems: "flex-start" }} className="sm:gap-12 lg:gap-[48px]">
+          <div className="flex flex-col sm:flex-row gap-[32px] items-start">
             <div>
-              <p style={{ color: "white", fontWeight: 700, fontSize: "14px", margin: "0 0 12px 0" }} className="md:text-[15px]">Follow us</p>
-              <div style={{ display: "flex", gap: "10px" }}>
-                <a href="#"><InstagramIcon /></a>
-                <a href="#"><FacebookIcon /></a>
-                <a href="#"><TwitterIcon /></a>
+              <p className="text-white font-[700] text-[15px] mb-[16px] mt-0">Follow us</p>
+              <div className="flex gap-[10px]">
+                <a href="#" className="hover:opacity-80 transition-opacity"><InstagramIcon /></a>
+                <a href="#" className="hover:opacity-80 transition-opacity"><FacebookIcon /></a>
+                <a href="#" className="hover:opacity-80 transition-opacity"><TwitterIcon /></a>
               </div>
             </div>
             <div>
-              <p style={{ color: "white", fontWeight: 700, fontSize: "14px", margin: "0 0 12px 0" }} className="md:text-[15px]">Call us</p>
-              <p style={{ color: "rgba(255,255,255,0.85)", fontSize: "14px", margin: 0 }} className="md:text-[15px]">+1 800 854-36-80</p>
+              <p className="text-white font-[700] text-[15px] mb-[16px] mt-0">Call us</p>
+              <p className="text-white/85 text-[15px] m-0">+1 800 854-36-80</p>
             </div>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div
-          style={{
-            borderTop: "1px solid rgba(255,255,255,0.18)",
-            padding: "16px 0 20px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "12px",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-          className="sm:flex-row sm:py-5 sm:gap-0 lg:pb-6"
-        >
-          <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "12px", margin: 0 }} className="sm:text-[13px]">
-            © 2021 All Rights Reserved
+        <div className="border-t border-white/15 py-[24px] flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0 mt-auto">
+          <p className="text-white/60 text-[13px] m-0 text-center sm:text-left">
+            © {new Date().getFullYear()} All Rights Reserved
           </p>
-          <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", justifyContent: "center" }} className="sm:gap-6 md:gap-9">
+          <div className="flex flex-wrap gap-[16px] sm:gap-[24px] justify-center">
             {["Privacy Policy", "Terms of Use", "Sales and Refunds", "Legal", "Site Map"].map((link) => (
               <a
                 key={link}
                 href="#"
-                style={{ color: "rgba(255,255,255,0.6)", fontSize: "12px", textDecoration: "none" }}
-                className="sm:text-[13px]"
+                className="text-white/60 text-[13px] no-underline hover:text-white transition-colors"
               >
                 {link}
               </a>

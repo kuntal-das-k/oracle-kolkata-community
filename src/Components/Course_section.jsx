@@ -1,15 +1,14 @@
 import { useState } from "react";
 
 const STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap');
-
   /* ── Card hover lift ── */
   .cs-card {
-    transition: transform 0.38s cubic-bezier(.22,1,.36,1), box-shadow 0.38s ease;
+    transition: transform 0.38s cubic-bezier(.22,1,.36,1), box-shadow 0.38s ease, border-color 0.3s;
   }
   .cs-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 30px 70px rgba(180,0,0,0.13), 0 8px 24px rgba(0,0,0,0.08) !important;
+    transform: translateY(-8px);
+    border-color: rgba(204, 0, 0, 0.2) !important;
+    box-shadow: 0 20px 40px -10px rgba(204,0,0,0.1), 0 8px 32px 0 rgba(0, 0, 0, 0.06) !important;
   }
   .cs-card:hover .cs-card-top-bar {
     width: 100% !important;
@@ -28,7 +27,7 @@ const STYLES = `
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, #a00000, #cc0000);
+    background: linear-gradient(90deg, #9b0000, #cc0000);
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     border-radius: inherit;
@@ -75,7 +74,7 @@ const STYLES = `
     left: 0;
     width: 60px;
     height: 4px;
-    background: linear-gradient(90deg, #cc0000, #ff6060);
+    background: linear-gradient(90deg, #cc0000, #ff5555);
     border-radius: 2px;
     transition: width 0.4s ease;
   }
@@ -86,17 +85,17 @@ const STYLES = `
     transition: all 0.28s ease;
   }
   .cs-view-all:hover {
-    background: linear-gradient(90deg, #cc0000, #880000) !important;
+    background: #cc0000 !important;
     color: #fff !important;
     border-color: transparent !important;
-    box-shadow: 0 12px 36px rgba(180,0,0,0.25);
+    box-shadow: 0 12px 36px rgba(204,0,0,0.2);
     transform: translateY(-2px);
   }
 
   /* ── Subtle dot grid bg ── */
   .cs-section-bg {
-    background-color: #ffffff;
-    background-image: radial-gradient(rgba(200,0,0,0.07) 1px, transparent 1px);
+    background-color: #fafafa;
+    background-image: radial-gradient(rgba(204,0,0,0.04) 1px, transparent 1px);
     background-size: 28px 28px;
   }
 `;
@@ -149,9 +148,9 @@ const COURSES = [
 const TAGS = ["All", "Database", "Cloud", "DevOps", "Analytics", "Security", "AI/ML"];
 
 const LEVEL = {
-  Beginner: { color: "#16a34a", bg: "#f0fdf4", border: "#bbf7d0" },
-  Intermediate: { color: "#b45309", bg: "#fffbeb", border: "#fde68a" },
-  Advanced: { color: "#b91c1c", bg: "#fff1f2", border: "#fecaca" },
+  Beginner: { color: "#16a34a", bg: "rgba(22, 163, 74, 0.08)", border: "rgba(22, 163, 74, 0.2)" },
+  Intermediate: { color: "#d97706", bg: "rgba(217, 119, 6, 0.08)", border: "rgba(217, 119, 6, 0.2)" },
+  Advanced: { color: "#dc2626", bg: "rgba(220, 38, 38, 0.08)", border: "rgba(220, 38, 38, 0.2)" },
 };
 
 const TAG_ICONS = {
@@ -164,11 +163,11 @@ function Stars({ rating }) {
     <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
       {[1, 2, 3, 4, 5].map(i => (
         <svg key={i} width="12" height="12" viewBox="0 0 12 12"
-          fill={i <= Math.round(rating) ? "#f59e0b" : "#e5e7eb"}>
+          fill={i <= Math.round(rating) ? "#fbbf24" : "#d1d5db"}>
           <path d="M6 0l1.545 3.13L11 3.635l-2.5 2.436.59 3.44L6 7.895l-3.09 1.616.59-3.44L1 3.635l3.455-.505z" />
         </svg>
       ))}
-      <span style={{ fontSize: "12px", fontWeight: 700, color: "#92400e", marginLeft: "3px" }}>{rating}</span>
+      <span style={{ fontSize: "12px", fontWeight: 700, color: "#d97706", marginLeft: "4px" }}>{rating}</span>
     </div>
   );
 }
@@ -180,13 +179,13 @@ function CourseCard({ course, index }) {
       className="cs-card"
       style={{
         animationDelay: `${index * 0.07}s`,
-        background: "#fff",
+        background: "#ffffff",
         borderRadius: "18px",
-        border: "1px solid #f1f1f1",
+        border: "1px solid rgba(0, 0, 0, 0.06)",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+        boxShadow: "0 4px 20px 0 rgba(0, 0, 0, 0.04)",
         position: "relative",
       }}
     >
@@ -196,7 +195,7 @@ function CourseCard({ course, index }) {
         style={{
           height: "4px",
           width: "48px",
-          background: "linear-gradient(90deg, #cc0000, #ff5555)",
+          background: "linear-gradient(90deg, #cc0000, #ff3333)",
           borderRadius: "0 4px 4px 0",
         }}
       />
@@ -204,7 +203,7 @@ function CourseCard({ course, index }) {
       {/* Card image area / color block */}
       <div style={{
         height: "120px",
-        background: "linear-gradient(135deg, #fff5f5 0%, #ffe4e4 100%)",
+        background: "linear-gradient(135deg, rgba(204, 0, 0, 0.05) 0%, rgba(204, 0, 0, 0.01) 100%)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -212,7 +211,7 @@ function CourseCard({ course, index }) {
         overflow: "hidden",
       }}>
         {/* big icon */}
-        <span style={{ fontSize: "48px", opacity: 0.35 }}>{TAG_ICONS[course.tag] || "📘"}</span>
+        <span style={{ fontSize: "48px", opacity: 0.2 }}>{TAG_ICONS[course.tag] || "📘"}</span>
         {/* Level badge */}
         <span style={{
           position: "absolute", top: "12px", right: "14px",
@@ -221,7 +220,7 @@ function CourseCard({ course, index }) {
           border: `1px solid ${lv.border}`,
           fontSize: "10px",
           fontWeight: 700,
-          fontFamily: "'DM Sans', sans-serif",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
           letterSpacing: "0.07em",
           padding: "4px 10px",
           borderRadius: "50px",
@@ -231,12 +230,12 @@ function CourseCard({ course, index }) {
         {/* Tag badge */}
         <span style={{
           position: "absolute", top: "12px", left: "14px",
-          background: "rgba(180,0,0,0.08)",
+          background: "rgba(204, 0, 0, 0.08)",
           color: "#cc0000",
-          border: "1px solid rgba(180,0,0,0.15)",
+          border: "1px solid rgba(204, 0, 0, 0.15)",
           fontSize: "10px",
           fontWeight: 700,
-          fontFamily: "'DM Sans', sans-serif",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
           letterSpacing: "0.08em",
           padding: "4px 10px",
           borderRadius: "50px",
@@ -250,19 +249,20 @@ function CourseCard({ course, index }) {
 
         {/* Title */}
         <h3 style={{
-          fontFamily: "'Bebas Neue', sans-serif",
+          fontFamily: "'Outfit', sans-serif",
           fontSize: "21px",
-          color: "#111",
-          letterSpacing: "0.05em",
+          color: "#1a1a2e",
+          letterSpacing: "0.02em",
           margin: 0,
           lineHeight: 1.15,
+          fontWeight: 700,
         }}>
           {course.title}
         </h3>
 
         {/* Desc */}
         <p style={{
-          fontFamily: "'DM Sans', sans-serif",
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
           fontSize: "13px",
           color: "#6b7280",
           lineHeight: 1.7,
@@ -277,26 +277,27 @@ function CourseCard({ course, index }) {
           <div style={{ display: "flex", alignItems: "center", gap: "9px" }}>
             <div style={{
               width: "30px", height: "30px", borderRadius: "50%",
-              background: "linear-gradient(135deg, #cc0000, #7a0000)",
+              background: "linear-gradient(135deg, #cc0000, #ff3333)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "'Bebas Neue', sans-serif",
+              fontFamily: "'Outfit', sans-serif",
+              fontWeight: "bold",
               fontSize: "12px", color: "#fff", flexShrink: 0,
-              boxShadow: "0 2px 8px rgba(180,0,0,0.3)",
+              boxShadow: "0 2px 8px rgba(204,0,0,0.2)",
             }}>
               {course.initials}
             </div>
             <div>
-              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", fontWeight: 600, color: "#374151" }}>
+              <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "12px", fontWeight: 600, color: "#1a1a2e" }}>
                 {course.instructor}
               </div>
-              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", color: "#9ca3af" }}>Instructor</div>
+              <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "10px", color: "#9ca3af" }}>Instructor</div>
             </div>
           </div>
           <Stars rating={course.rating} />
         </div>
 
         {/* Divider */}
-        <div style={{ height: "1px", background: "#f3f4f6" }} />
+        <div style={{ height: "1px", background: "rgba(0,0,0,0.06)" }} />
 
         {/* Meta stats */}
         <div style={{ display: "flex", gap: "0", justifyContent: "space-between" }}>
@@ -304,10 +305,10 @@ function CourseCard({ course, index }) {
             { icon: "⏱", label: "Duration", val: course.duration },
             { icon: "📚", label: "Lessons", val: `${course.lessons}` },
             { icon: "👥", label: "Enrolled", val: course.enrolled },
-          ].map(({ icon, label, val }) => (
+          ].map(({ label, val }) => (
             <div key={label} style={{ textAlign: "center", flex: 1 }}>
-              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "17px", color: "#cc0000", letterSpacing: "0.04em" }}>{val}</div>
-              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", color: "#9ca3af", letterSpacing: "0.05em", textTransform: "uppercase" }}>{label}</div>
+              <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "17px", color: "#cc0000", letterSpacing: "0.01em", fontWeight: 700 }}>{val}</div>
+              <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "10px", color: "#9ca3af", letterSpacing: "0.05em", textTransform: "uppercase" }}>{label}</div>
             </div>
           ))}
         </div>
@@ -315,21 +316,21 @@ function CourseCard({ course, index }) {
         {/* Progress */}
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", color: "#9ca3af", letterSpacing: "0.07em", textTransform: "uppercase" }}>
+            <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "10px", color: "#9ca3af", letterSpacing: "0.07em", textTransform: "uppercase" }}>
               Avg. Completion
             </span>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", fontWeight: 700, color: "#cc0000" }}>
+            <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "10px", fontWeight: 700, color: "#cc0000" }}>
               {course.progress}%
             </span>
           </div>
-          <div style={{ height: "5px", background: "#f3f4f6", borderRadius: "3px", overflow: "hidden" }}>
+          <div style={{ height: "5px", background: "rgba(0,0,0,0.06)", borderRadius: "3px", overflow: "hidden" }}>
             <div
               className="cs-progress-fill"
               style={{
                 "--progress": `${course.progress}%`,
                 width: `${course.progress}%`,
                 height: "100%",
-                background: "linear-gradient(90deg, #cc0000, #ff5555)",
+                background: "linear-gradient(90deg, #cc0000, #ff3333)",
                 borderRadius: "3px",
               }}
             />
@@ -342,10 +343,10 @@ function CourseCard({ course, index }) {
           style={{
             background: "transparent",
             color: "#cc0000",
-            border: "2px solid #cc0000",
+            border: "1.5px solid rgba(204, 0, 0, 0.3)",
             borderRadius: "10px",
             padding: "12px 0",
-            fontFamily: "'DM Sans', sans-serif",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
             fontWeight: 700,
             fontSize: "13px",
             letterSpacing: "0.07em",
@@ -361,22 +362,28 @@ function CourseCard({ course, index }) {
   );
 }
 
+function parseEnrolled(str) {
+  const num = parseFloat(str);
+  if (str.toLowerCase().endsWith('k')) return num * 1000;
+  return num;
+}
+
 export default function Course_section() {
   const [filter, setFilter] = useState("All");
   const [sort, setSort] = useState("rating");
 
-  const filtered = (filter === "All" ? COURSES : COURSES.filter(c => c.tag === filter))
+  const filtered = [...(filter === "All" ? COURSES : COURSES.filter(c => c.tag === filter))]
     .sort((a, b) =>
       sort === "rating"
         ? b.rating - a.rating
-        : parseInt(b.enrolled) - parseInt(a.enrolled)
+        : parseEnrolled(b.enrolled) - parseEnrolled(a.enrolled)
     );
 
   return (
     <>
       <style>{STYLES}</style>
 
-      <section className="cs-section-bg" style={{ padding: "60px 0 80px" }}>
+      <section id="StudentCorner" className="cs-section-bg" style={{ padding: "80px 0 100px" }}>
         <div style={{ maxWidth: "1260px", margin: "0 auto", padding: "0 16px" }} className="sm:px-6 md:px-10 lg:px-12">
 
           {/* ── Section header ── */}
@@ -386,7 +393,7 @@ export default function Course_section() {
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
                 <div style={{ width: "36px", height: "2px", background: "#cc0000", borderRadius: "1px" }} />
                 <span style={{
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
                   fontSize: "11px", fontWeight: 700,
                   letterSpacing: "0.28em", color: "#cc0000",
                   textTransform: "uppercase",
@@ -397,30 +404,31 @@ export default function Course_section() {
 
               {/* Heading */}
               <h2 className="cs-heading-line" style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: "clamp(40px, 5.5vw, 66px)",
-                color: "#111",
-                letterSpacing: "0.07em",
+                fontFamily: "'Outfit', sans-serif",
+                fontSize: "clamp(40px, 5.5vw, 56px)",
+                color: "#1a1a2e",
+                letterSpacing: "0.02em",
                 margin: 0,
-                lineHeight: 1,
+                lineHeight: 1.1,
+                fontWeight: 800,
               }}>
                 Course Showcase
               </h2>
               <p style={{
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
                 fontSize: "15px",
                 color: "#6b7280",
                 margin: "14px 0 0",
                 maxWidth: "440px",
                 lineHeight: 1.7,
-                fontWeight: 300,
+                fontWeight: 400,
               }}>
                 Curated expert-led courses built for students, developers, architects, and DBAs across India.
               </p>
             </div>
 
             {/* Sort toggle */}
-            <div style={{ display: "flex", gap: "8px", background: "#f9fafb", padding: "4px", borderRadius: "12px", border: "1px solid #f1f1f1" }}>
+            <div style={{ display: "flex", gap: "8px", background: "rgba(0,0,0,0.02)", padding: "4px", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.06)" }}>
               {[["rating", "⭐ Top Rated"], ["enrolled", "🔥 Most Popular"]].map(([val, label]) => (
                 <button
                   key={val}
@@ -429,13 +437,13 @@ export default function Course_section() {
                     padding: "9px 18px",
                     borderRadius: "9px",
                     border: "none",
-                    background: sort === val ? "#fff" : "transparent",
-                    color: sort === val ? "#cc0000" : "#9ca3af",
-                    fontFamily: "'DM Sans', sans-serif",
+                    background: sort === val ? "#ffffff" : "transparent",
+                    color: sort === val ? "#cc0000" : "#6b7280",
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
                     fontWeight: 600,
                     fontSize: "12px",
                     cursor: "pointer",
-                    boxShadow: sort === val ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
+                    boxShadow: sort === val ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
                     transition: "all 0.2s",
                   }}
                 >
@@ -456,14 +464,14 @@ export default function Course_section() {
                   padding: "9px 20px",
                   borderRadius: "50px",
                   border: "1.5px solid",
-                  borderColor: filter === tag ? "#cc0000" : "#e5e7eb",
-                  background: filter === tag ? "#cc0000" : "#fff",
+                  borderColor: filter === tag ? "#cc0000" : "rgba(0,0,0,0.08)",
+                  background: filter === tag ? "#cc0000" : "#ffffff",
                   color: filter === tag ? "#fff" : "#6b7280",
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
                   fontWeight: 600,
                   fontSize: "12px",
                   letterSpacing: "0.04em",
-                  boxShadow: filter === tag ? "0 4px 16px rgba(180,0,0,0.22)" : "0 1px 4px rgba(0,0,0,0.04)",
+                  boxShadow: filter === tag ? "0 4px 16px rgba(204,0,0,0.15)" : "0 2px 8px rgba(0,0,0,0.03)",
                 }}
               >
                 {tag !== "All" && <span style={{ marginRight: "5px" }}>{TAG_ICONS[tag]}</span>}
@@ -474,9 +482,9 @@ export default function Course_section() {
             {/* Count */}
             <div style={{
               marginLeft: "auto",
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
               fontSize: "13px",
-              color: "#9ca3af",
+              color: "#6b7280",
               display: "flex",
               alignItems: "center",
               gap: "5px",
@@ -502,26 +510,26 @@ export default function Course_section() {
           <div style={{ textAlign: "center", marginTop: "64px" }}>
             {/* decorative line */}
             <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "32px" }}>
-              <div style={{ flex: 1, height: "1px", background: "linear-gradient(90deg, transparent, #e5e7eb)" }} />
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "#d1d5db", letterSpacing: "0.15em", textTransform: "uppercase" }}>Explore More</span>
-              <div style={{ flex: 1, height: "1px", background: "linear-gradient(90deg, #e5e7eb, transparent)" }} />
+              <div style={{ flex: 1, height: "1px", background: "linear-gradient(90deg, transparent, rgba(0,0,0,0.06))" }} />
+              <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "11px", color: "rgba(0,0,0,0.25)", letterSpacing: "0.15em", textTransform: "uppercase" }}>Explore More</span>
+              <div style={{ flex: 1, height: "1px", background: "linear-gradient(90deg, rgba(0,0,0,0.06), transparent)" }} />
             </div>
 
             <button
               className="cs-view-all"
               style={{
-                background: "#fff",
+                background: "transparent",
                 border: "2px solid #cc0000",
                 color: "#cc0000",
                 padding: "16px 60px",
                 borderRadius: "50px",
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
                 fontWeight: 700,
                 fontSize: "13px",
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
                 cursor: "pointer",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.04)",
               }}
             >
               View All Courses
