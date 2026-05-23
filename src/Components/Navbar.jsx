@@ -120,57 +120,58 @@ const Navbar = ({ activeItem, onNavClick }) => {
           </div>
         </nav>
 
-        {/* Mobile Navigation */}
-        <div
-          className={`lg:hidden fixed inset-0 bg-[#0c0d12]/98 backdrop-blur-xl z-40 transition-all duration-300 overflow-y-auto ${
-            isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-          }`}
-        >
-          <div className="flex flex-col items-center justify-center min-h-full py-24 px-6 gap-6">
-            {navItems.map((item) => (
+      </div>
+
+      {/* Mobile Navigation */}
+      <div
+        className={`lg:hidden fixed inset-0 bg-[#0c0d12]/98 backdrop-blur-xl z-40 transition-all duration-300 overflow-y-auto ${
+          isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        <div className="flex flex-col items-center justify-center min-h-full py-24 px-6 gap-6">
+          {navItems.map((item) => (
+            <div
+              key={item}
+              onClick={() => handleNavClick(item)}
+              className="relative cursor-pointer flex flex-col items-center"
+            >
+              <span
+                className={`${
+                  activeItem === item
+                    ? 'text-xl font-bold text-[#ff3333]'
+                    : 'text-lg font-medium text-gray-300'
+                } tracking-wide transition-all duration-200 whitespace-nowrap`}
+              >
+                {item}
+              </span>
               <div
-                key={item}
-                onClick={() => handleNavClick(item)}
-                className="relative cursor-pointer flex flex-col items-center"
-              >
-                <span
-                  className={`${
-                    activeItem === item
-                      ? 'text-xl font-bold text-[#ff3333]'
-                      : 'text-lg font-medium text-gray-300'
-                  } tracking-wide transition-all duration-200 whitespace-nowrap`}
-                >
-                  {item}
-                </span>
-                <div
-                  className={`w-12 h-[2px] bg-red-600 rounded-full mt-1 transition-all ${
-                    activeItem === item ? 'scale-x-100' : 'scale-x-0'
-                  }`}
-                />
-              </div>
-            ))}
-
-            <div className="flex flex-col gap-3 mt-6 w-48">
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  handleAuthAction();
-                }}
-                className="bg-[#cc0000] text-white py-2.5 rounded-full text-sm font-semibold hover:bg-[#ff3333] transition-colors tracking-widest cursor-pointer"
-              >
-                {currentUser ? 'LOGOUT' : 'LOGIN'}
-              </button>
-
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  handleNavClick('About us');
-                }}
-                className="border border-white/20 text-white hover:bg-white hover:text-black hover:border-white py-2.5 rounded-full text-sm font-semibold transition-all cursor-pointer"
-              >
-                Talk to an expert
-              </button>
+                className={`w-12 h-[2px] bg-red-600 rounded-full mt-1 transition-all ${
+                  activeItem === item ? 'scale-x-100' : 'scale-x-0'
+                }`}
+              />
             </div>
+          ))}
+
+          <div className="flex flex-col gap-3 mt-6 w-48">
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                handleAuthAction();
+              }}
+              className="bg-[#cc0000] text-white py-2.5 rounded-full text-sm font-semibold hover:bg-[#ff3333] transition-colors tracking-widest cursor-pointer"
+            >
+              {currentUser ? 'LOGOUT' : 'LOGIN'}
+            </button>
+
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                handleNavClick('About us');
+              }}
+              className="border border-white/20 text-white hover:bg-white hover:text-black hover:border-white py-2.5 rounded-full text-sm font-semibold transition-all cursor-pointer"
+            >
+              Talk to an expert
+            </button>
           </div>
         </div>
       </div>
