@@ -23,37 +23,60 @@ export default function ContactUs() {
     setSubmitMessage("");
 
     try {
-      // Use the deployed Google Apps Script URL from environment variables
-      const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/d/YOUR_DEPLOYMENT_ID/usercontent/exec';
-      
-      if (GOOGLE_SCRIPT_URL.includes('YOUR_DEPLOYMENT_ID')) {
-        setSubmitMessage('Configuration error: Google Apps Script URL not set. Please contact administrator.');
+      const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+      const SHEET2API_URL = import.meta.env.VITE_SHEET2API_URL;
+
+      if (!WEB3FORMS_KEY || !SHEET2API_URL) {
+        setSubmitMessage("Configuration error: form endpoints not set. Please contact administrator.");
         setIsLoading(false);
         return;
       }
 
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-          type: 'contact',
+      const payload = {
+        timestamp: new Date().toISOString(),
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+      };
+
+      const [web3formsResult, sheet2apiResult] = await Promise.allSettled([
+        fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            access_key: WEB3FORMS_KEY,
+            ...payload,
+          }),
         }),
-      });
+        fetch(SHEET2API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }),
+      ]);
 
-      const data = await response.json();
+      const web3formsOk =
+        web3formsResult.status === "fulfilled" &&
+        (await web3formsResult.value.json()).success === true;
+      const sheet2apiOk =
+        sheet2apiResult.status === "fulfilled" &&
+        sheet2apiResult.value.ok;
 
-      if (data.success) {
+      if (web3formsOk && sheet2apiOk) {
         setSubmitMessage("✓ Thank you! Your message has been sent successfully.");
         setFormData({ name: "", email: "", subject: "", message: "" });
         setTimeout(() => setSubmitMessage(""), 3000);
+      } else if (!web3formsOk && !sheet2apiOk) {
+        setSubmitMessage("Failed to send message. Please try again later.");
+      } else if (!web3formsOk) {
+        setSubmitMessage("Message saved, but email failed. Please try again.");
       } else {
-        setSubmitMessage(data.error || "Something went wrong. Please try again.");
+        setSubmitMessage("Email sent, but saving failed. Please try again.");
       }
     } catch (error) {
       console.error('Error submitting contact form:', error);
@@ -79,7 +102,7 @@ export default function ContactUs() {
         {/* Form + Image Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-10 items-start">
           {/* Left: Form */}
-          <div className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             {/* Name */}
             <div className="relative">
               <label className="absolute -top-2 left-3 text-xs text-gray-400 bg-white px-1">
@@ -140,14 +163,14 @@ export default function ContactUs() {
             {/* Submit Button */}
             <div>
               <button
-                onClick={handleSubmit}
+                type="submit"
                 disabled={isLoading}
                 className="bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white text-sm font-medium px-6 py-3 rounded-md shadow-md transition-colors duration-200 disabled:cursor-not-allowed"
               >
                 {isLoading ? "Sending..." : "Send Message"}
               </button>
             </div>
-          </div>
+          </form>
 
           {/* Right: Image */}
           <img src={OracelContact} alt="Contact" className="w-full h-auto rounded-lg" />

@@ -1,11 +1,20 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  updateProfile,
+} from 'firebase/auth';
+import { auth } from '../lib/firebase';
 
 const LoginModal = ({ isOpen, onClose }) => {
+  const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
+    password: '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -20,42 +29,77 @@ const LoginModal = ({ isOpen, onClose }) => {
     setMessage('');
 
     try {
-      // Use the deployed Google Apps Script URL from environment variables
-      const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/d/YOUR_DEPLOYMENT_ID/usercontent/exec';
-      
-      if (GOOGLE_SCRIPT_URL.includes('YOUR_DEPLOYMENT_ID')) {
-        setMessage('Configuration error: Google Apps Script URL not set. Please contact administrator.');
+      const requiredEnv = [
+        import.meta.env.VITE_FIREBASE_API_KEY,
+        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        import.meta.env.VITE_FIREBASE_PROJECT_ID,
+        import.meta.env.VITE_FIREBASE_APP_ID,
+      ];
+
+      if (requiredEnv.some((value) => !value)) {
+        setMessage('Configuration error: Firebase env variables not set. Please contact administrator.');
         setIsLoading(false);
         return;
       }
 
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          type: 'login',
-        }),
-      });
+      if (isSignUp) {
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          formData.email,
+          formData.password
+        );
 
-      const data = await response.json();
+        if (formData.name) {
+          await updateProfile(userCredential.user, { displayName: formData.name });
+        }
 
-      if (data.success) {
-        setMessage('✓ Thank you! Your information has been saved.');
-        setTimeout(() => {
-          onClose();
-          setFormData({ name: '', email: '', phone: '' });
-        }, 1500);
+        setMessage('✓ Account created successfully.');
       } else {
-        setMessage(data.error || 'Something went wrong. Please try again.');
+        await signInWithEmailAndPassword(auth, formData.email, formData.password);
+        setMessage('✓ Logged in successfully.');
       }
+
+      setTimeout(() => {
+        onClose();
+        setFormData({ name: '', email: '', password: '' });
+      }, 1200);
     } catch (error) {
       console.error('Error:', error);
-      setMessage('Failed to connect to server. Please try again later.');
+      setMessage(error?.message || 'Authentication failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    setMessage('');
+
+    try {
+      const requiredEnv = [
+        import.meta.env.VITE_FIREBASE_API_KEY,
+        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        import.meta.env.VITE_FIREBASE_PROJECT_ID,
+        import.meta.env.VITE_FIREBASE_APP_ID,
+      ];
+
+      if (requiredEnv.some((value) => !value)) {
+        setMessage('Configuration error: Firebase env variables not set. Please contact administrator.');
+        setIsLoading(false);
+        return;
+      }
+
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      setMessage('✓ Logged in with Google.');
+
+      setTimeout(() => {
+        onClose();
+        setFormData({ name: '', email: '', password: '' });
+      }, 1200);
+    } catch (error) {
+      console.error('Error:', error);
+      setMessage(error?.message || 'Google login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -84,10 +128,12 @@ const LoginModal = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-[#800000]">
-            Join Our Community
+            {isSignUp ? 'Create Account' : 'Welcome Back'}
           </h2>
           <p className="text-gray-500 text-sm mt-2">
-            Enter your details to connect with us
+            {isSignUp
+              ? 'Sign up to join the community'
+              : 'Log in to continue'}
           </p>
         </div>
 
@@ -106,20 +152,22 @@ const LoginModal = ({ isOpen, onClose }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all text-gray-900"
-              placeholder="Enter your name"
-            />
-          </div>
+          {isSignUp && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all text-gray-900"
+                placeholder="Enter your name"
+              />
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -138,16 +186,16 @@ const LoginModal = ({ isOpen, onClose }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Phone Number
+              Password
             </label>
             <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
+              type="password"
+              name="password"
+              value={formData.password}
               onChange={handleChange}
               required
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all text-gray-900"
-              placeholder="Enter your phone number"
+              placeholder="Enter your password"
             />
           </div>
 
@@ -156,9 +204,35 @@ const LoginModal = ({ isOpen, onClose }) => {
             disabled={isLoading}
             className="w-full bg-[#b31b1b] hover:bg-[#8a1515] text-white font-medium py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? 'Please wait...' : 'Submit'}
+            {isLoading
+              ? 'Please wait...'
+              : isSignUp
+                ? 'Create Account'
+                : 'Log In'}
           </button>
         </form>
+
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={isLoading}
+            className="w-full border border-gray-300 hover:border-gray-400 text-gray-700 font-medium py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Continue with Google
+          </button>
+        </div>
+
+        <div className="mt-5 text-center text-sm text-gray-600">
+          {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+          <button
+            type="button"
+            onClick={() => setIsSignUp((prev) => !prev)}
+            className="text-[#b31b1b] hover:text-[#8a1515] font-medium"
+          >
+            {isSignUp ? 'Log in' : 'Sign up'}
+          </button>
+        </div>
       </div>
     </div>
   );

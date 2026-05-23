@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import Logo from '../assets/Logo.png';
 import LoginModal from './LoginModal';
+import { auth } from '../lib/firebase';
 
 const Navbar = () => {
   const [activeItem, setActiveItem] = useState('Home');
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const navItems = ['Home', 'StudentCorner', 'About us'];
 
   const toggleMobileMenu = () => {
@@ -15,6 +18,26 @@ const Navbar = () => {
   const handleNavClick = (item) => {
     setActiveItem(item);
     setIsMobileMenuOpen(false);
+  };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      if (user) {
+        setIsLoginOpen(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleAuthAction = async () => {
+    if (currentUser) {
+      await signOut(auth);
+      return;
+    }
+
+    setIsLoginOpen(true);
   };
 
   return (
@@ -48,7 +71,7 @@ const Navbar = () => {
                   className={`${activeItem === item
                     ? 'text-white text-lg xl:text-[22px]'
                     : 'text-[#b31b1b] text-base xl:text-lg hover:text-red-500'
-                    } font-normal tracking-wide pb-1 transition-all duration-300`}
+                    } font-normal tracking-wide pb-1 transition-all duration-300 whitespace-nowrap`}
                 >
                   {item}
                 </span>
@@ -62,10 +85,10 @@ const Navbar = () => {
           {/* Action Buttons */}
           <div className="flex items-center gap-4 xl:gap-6 pl-4 border-l border-[#3a0b0b]">
             <button
-              onClick={() => setIsLoginOpen(true)}
+              onClick={handleAuthAction}
               className="bg-white text-black px-6 xl:px-10 py-2 rounded-full text-xs xl:text-sm font-medium hover:bg-gray-200 transition-colors tracking-widest"
             >
-              LOGIN
+              {currentUser ? 'LOGOUT' : 'LOGIN'}
             </button>
 
             <button className="border-[1.5px] border-[#b31b1b] text-[#b31b1b] px-4 xl:px-6 py-2 rounded-full text-xs xl:text-[15px] font-normal hover:bg-[#b31b1b] hover:text-white transition-all whitespace-nowrap">
@@ -87,7 +110,7 @@ const Navbar = () => {
                   className={`${activeItem === item
                     ? 'text-white text-2xl'
                     : 'text-[#b31b1b] text-xl hover:text-red-500'
-                    } font-normal tracking-wide pb-2 transition-all duration-300`}
+                    } font-normal tracking-wide pb-2 transition-all duration-300 whitespace-nowrap`}
                 >
                   {item}
                 </span>
@@ -101,11 +124,11 @@ const Navbar = () => {
               <button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
-                  setIsLoginOpen(true);
+                  handleAuthAction();
                 }}
                 className="bg-white text-black px-12 py-3 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors tracking-widest"
               >
-                LOGIN
+                {currentUser ? 'LOGOUT' : 'LOGIN'}
               </button>
 
               <button className="border-[1.5px] border-[#b31b1b] text-[#b31b1b] px-8 py-3 rounded-full text-sm font-normal hover:bg-[#b31b1b] hover:text-white transition-all">
