@@ -122,11 +122,11 @@ const Navbar = ({ activeItem, onNavClick }) => {
 
         {/* Mobile Navigation */}
         <div
-          className={`lg:hidden fixed inset-0 bg-[#0c0d12]/98 backdrop-blur-xl z-40 transition-all duration-300 ${
+          className={`lg:hidden fixed inset-0 bg-[#0c0d12]/98 backdrop-blur-xl z-40 transition-all duration-300 overflow-y-auto ${
             isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
           }`}
         >
-          <div className="flex flex-col items-center justify-center h-full gap-6">
+          <div className="flex flex-col items-center justify-center min-h-full py-24 px-6 gap-6">
             {navItems.map((item) => (
               <div
                 key={item}
